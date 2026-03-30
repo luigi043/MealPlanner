@@ -14,18 +14,16 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.*
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mealplanner.domain.model.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen() {
-    var dailyCalorieTarget by remember { mutableStateOf("2000") }
-    var dailyProteinTarget by remember { mutableStateOf("150") }
-    var dailyCarbsTarget by remember { mutableStateOf("250") }
-    var dailyFatTarget by remember { mutableStateOf("65") }
-    var selectedGoal by remember { mutableStateOf(PlanningGoal.BALANCED) }
-    var notificationsEnabled by remember { mutableStateOf(true) }
-    var darkModeEnabled by remember { mutableStateOf(false) }
+fun SettingsScreen(
+    viewModel: SettingsViewModel = hiltViewModel()
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -49,20 +47,23 @@ fun SettingsScreen() {
                     fontWeight = FontWeight.Medium)
                 Spacer(Modifier.height(8.dp))
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    PlanningGoal.values().forEach { goal ->
+                    PlanningGoal.entries.forEach { goal ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(10.dp))
                                 .background(
-                                    if (selectedGoal == goal) MaterialTheme.colorScheme.primaryContainer
+                                    if (state.userGoals.planningGoal == goal) MaterialTheme.colorScheme.primaryContainer
                                     else MaterialTheme.colorScheme.surfaceVariant.copy(0.3f)
                                 )
-                                .clickable { selectedGoal = goal }
+                                .clickable { viewModel.updatePlanningGoal(goal) }
                                 .padding(12.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            RadioButton(selected = selectedGoal == goal, onClick = { selectedGoal = goal })
+                            RadioButton(
+                                selected = state.userGoals.planningGoal == goal,
+                                onClick = { viewModel.updatePlanningGoal(goal) }
+                            )
                             Spacer(Modifier.width(8.dp))
                             Text(goal.displayName, style = MaterialTheme.typography.bodyMedium)
                         }
@@ -74,32 +75,28 @@ fun SettingsScreen() {
             SettingsCard(title = "Daily Nutrition Targets", icon = Icons.Outlined.MonitorHeart) {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     NutritionTargetField(
-                        label = "Calories", value = dailyCalorieTarget,
-                        onValueChange = { dailyCalorieTarget = it }, unit = "kcal",
+                        label = "Calories", value = state.userGoals.dailyCalorieTarget.toString(),
+                        onValueChange = viewModel::updateCalorieTarget, unit = "kcal",
                         modifier = Modifier.weight(1f)
                     )
                     NutritionTargetField(
-                        label = "Protein", value = dailyProteinTarget,
-                        onValueChange = { dailyProteinTarget = it }, unit = "g",
+                        label = "Protein", value = state.userGoals.dailyProteinTarget.toString(),
+                        onValueChange = viewModel::updateProteinTarget, unit = "g",
                         modifier = Modifier.weight(1f)
                     )
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     NutritionTargetField(
-                        label = "Carbs", value = dailyCarbsTarget,
-                        onValueChange = { dailyCarbsTarget = it }, unit = "g",
+                        label = "Carbs", value = state.userGoals.dailyCarbsTarget.toString(),
+                        onValueChange = viewModel::updateCarbsTarget, unit = "g",
                         modifier = Modifier.weight(1f)
                     )
                     NutritionTargetField(
-                        label = "Fat", value = dailyFatTarget,
-                        onValueChange = { dailyFatTarget = it }, unit = "g",
+                        label = "Fat", value = state.userGoals.dailyFatTarget.toString(),
+                        onValueChange = viewModel::updateFatTarget, unit = "g",
                         modifier = Modifier.weight(1f)
                     )
                 }
-                Button(
-                    onClick = { /* Save goals */ },
-                    modifier = Modifier.fillMaxWidth()
-                ) { Text("Save Targets") }
             }
 
             // Preferences
@@ -108,16 +105,16 @@ fun SettingsScreen() {
                     label = "Meal Reminders",
                     description = "Get notified about meal times",
                     icon = Icons.Outlined.Notifications,
-                    checked = notificationsEnabled,
-                    onCheckedChange = { notificationsEnabled = it }
+                    checked = state.notificationsEnabled,
+                    onCheckedChange = viewModel::toggleNotifications
                 )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), thickness = 0.5.dp)
                 SettingsToggle(
                     label = "Dark Mode",
                     description = "Switch between light and dark theme",
                     icon = Icons.Outlined.DarkMode,
-                    checked = darkModeEnabled,
-                    onCheckedChange = { darkModeEnabled = it }
+                    checked = state.darkModeEnabled,
+                    onCheckedChange = viewModel::toggleDarkMode
                 )
             }
 
@@ -127,27 +124,6 @@ fun SettingsScreen() {
                 InfoRow("Build", "Production")
                 InfoRow("Recipe Storage", "Room Database (local)")
                 InfoRow("Architecture", "MVVM + Clean Architecture")
-            }
-
-            // Data management
-            SettingsCard(title = "Data", icon = Icons.Outlined.Storage) {
-                OutlinedButton(
-                    onClick = { /* Export */ },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(Icons.Outlined.FileDownload, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(Modifier.width(8.dp))
-                    Text("Export Grocery List")
-                }
-                Spacer(Modifier.height(8.dp))
-                OutlinedButton(
-                    onClick = { /* Import */ },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(Icons.Outlined.FileUpload, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(Modifier.width(8.dp))
-                    Text("Import Recipes")
-                }
             }
 
             Spacer(Modifier.height(16.dp))

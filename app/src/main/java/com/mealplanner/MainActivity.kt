@@ -18,10 +18,14 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
+import androidx.work.*
+import com.mealplanner.data.local.PreferencesManager
 import com.mealplanner.presentation.navigation.*
 import com.mealplanner.presentation.ui.theme.MealPlannerTheme
 import com.mealplanner.util.DatabaseSeeder
+import com.mealplanner.util.NotificationWorker
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -30,6 +34,9 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var databaseSeeder: DatabaseSeeder
 
+    @Inject
+    lateinit var preferencesManager: PreferencesManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -37,11 +44,32 @@ class MainActivity : ComponentActivity() {
         // Seed sample data if database is empty
         databaseSeeder.seedIfEmpty()
 
+        // Schedule meal reminders
+        scheduleMealReminders()
+
         setContent {
-            MealPlannerTheme {
+            val darkModeEnabled by preferencesManager.darkModeEnabled.collectAsState(initial = false)
+
+            MealPlannerTheme(darkTheme = darkModeEnabled) {
                 MealPlannerMainScreen()
             }
         }
+    }
+
+    private fun scheduleMealReminders() {
+        val workRequest = PeriodicWorkRequestBuilder<NotificationWorker>(8, TimeUnit.HOURS)
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
+                    .build()
+            )
+            .build()
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "meal_reminder_work",
+            ExistingPeriodicWorkPolicy.KEEP,
+            workRequest
+        )
     }
 }
 

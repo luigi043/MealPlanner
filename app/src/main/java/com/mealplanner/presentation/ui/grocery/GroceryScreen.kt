@@ -1,5 +1,6 @@
 package com.mealplanner.presentation.ui.grocery
 
+import android.content.Intent
 import androidx.compose.animation.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -14,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
@@ -27,6 +29,7 @@ import com.mealplanner.presentation.ui.components.*
 @Composable
 fun GroceryScreen(viewModel: GroceryViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     var showAddDialog by remember { mutableStateOf(false) }
     var showClearMenu by remember { mutableStateOf(false) }
 
@@ -47,6 +50,19 @@ fun GroceryScreen(viewModel: GroceryViewModel = hiltViewModel()) {
                     }
                 },
                 actions = {
+                    if (state.totalItems > 0) {
+                        IconButton(onClick = {
+                            val shareIntent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, viewModel.getExportText())
+                            }
+                            context.startActivity(Intent.createChooser(shareIntent, "Share Grocery List"))
+                        }) {
+                            Icon(Icons.Outlined.Share, contentDescription = "Share",
+                                tint = MaterialTheme.colorScheme.onPrimary)
+                        }
+                    }
                     Box {
                         IconButton(onClick = { showClearMenu = true }) {
                             Icon(Icons.Outlined.MoreVert, contentDescription = "More",
