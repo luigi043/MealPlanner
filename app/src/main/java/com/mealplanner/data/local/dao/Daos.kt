@@ -111,6 +111,9 @@ interface GroceryDao {
     @Query("UPDATE grocery_items SET isChecked = :isChecked WHERE id = :id")
     suspend fun updateCheckedStatus(id: Long, isChecked: Boolean)
 
+    @Update
+    suspend fun updateGroceryItem(item: GroceryItemEntity)
+
     @Delete
     suspend fun deleteGroceryItem(item: GroceryItemEntity)
 
