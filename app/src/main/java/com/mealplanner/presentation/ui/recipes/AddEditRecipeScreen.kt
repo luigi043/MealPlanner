@@ -51,7 +51,7 @@ fun AddEditRecipeScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back",
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back",
                             tint = MaterialTheme.colorScheme.onPrimary)
                     }
                 },
