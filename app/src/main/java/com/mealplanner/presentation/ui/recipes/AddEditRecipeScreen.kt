@@ -63,7 +63,7 @@ fun AddEditRecipeScreen(
                             strokeWidth = 2.dp
                         )
                     } else {
-                        TextButton(onClick = { viewModel.saveRecipe() }) {
+                        TextButton(onClick = { viewModel.saveRecipe() }, enabled = !state.isLoading) {
                             Text("Save", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold)
                         }
                     }
@@ -80,6 +80,7 @@ fun AddEditRecipeScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            if (state.isLoading) LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
             state.errors["save"]?.let { Text(it, color = MaterialTheme.colorScheme.error) }
             if (state.errors.isNotEmpty()) {
                 Text("Please check the highlighted fields below.", color = MaterialTheme.colorScheme.error)
@@ -140,7 +141,7 @@ fun AddEditRecipeScreen(
             FormCard(title = "Timing & Servings") {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     FormField(
-                        label = "Prep Time (min)",
+                        label = "Prep (min)",
                         value = state.prepTime,
                         error = state.errors["prepTime"],
                         onValueChange = viewModel::onPrepTimeChange,
@@ -149,7 +150,7 @@ fun AddEditRecipeScreen(
                         modifier = Modifier.weight(1f)
                     )
                     FormField(
-                        label = "Cook Time (min)",
+                        label = "Cook (min)",
                         value = state.cookTime,
                         error = state.errors["cookTime"],
                         onValueChange = viewModel::onCookTimeChange,
@@ -296,7 +297,7 @@ fun AddEditRecipeScreen(
             Button(
                 onClick = { viewModel.saveRecipe() },
                 modifier = Modifier.fillMaxWidth().height(52.dp),
-                enabled = !state.isSaving
+                enabled = !state.isSaving && !state.isLoading
             ) {
                 if (state.isSaving) {
                     CircularProgressIndicator(modifier = Modifier.size(20.dp),

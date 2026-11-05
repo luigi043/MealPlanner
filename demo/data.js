@@ -90,7 +90,7 @@ export function sampleState() {
         calories: 280,
         protein: 16,
         carbs: 38,
-        fat: 8,
+        fat: 6,
         favorite: false,
         art: "berries",
         tags: "quick, snack",
