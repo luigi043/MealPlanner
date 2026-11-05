@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#245840" />
+    <meta
+      name="description"
+      content="Try MealPlanner: recipes, weekly meal planning and a grocery checklist. An interactive portfolio demo of the Kotlin Android app."
+    />
+    <title>MealPlanner | Interactive app demo</title>
+    <link rel="icon" type="image/svg+xml" href="./leaf.svg" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <aside class="portfolio-note">
+      <a
+        class="wordmark"
+        href="https://github.com/luigi043/MealPlanner"
+        target="_blank"
+        rel="noreferrer"
+        ><img src="./leaf.svg" alt="" width="28" height="28" /> MealPlanner</a
+      >
+      <h1>A little planning.<br />A better week.</h1>
+      <p>
+        A personal recipe book, a weekly plan, and one less thing to think about
+        at the grocery store.
+      </p>
+      <span class="project-label">KOTLIN · JETPACK COMPOSE · ROOM</span>
+      <div class="portfolio-links">
+        <a
+          href="https://github.com/luigi043/MealPlanner"
+          target="_blank"
+          rel="noreferrer"
+          >View Android source ↗</a
+        ><a href="./gallery.html">Screen gallery ↗</a
+        ><a href="./downloads/mealplanner-debug.apk" download
+          >Download Android APK ↓</a
+        >
+      </div>
+      <p class="small">
+        Interactive browser demo. Sample data stays in this browser. No account
+        or Android sync.
+      </p>
+    </aside>
+    <div class="device-wrap">
+      <div class="demo-label">
+        <span class="live-dot"></span> INTERACTIVE PORTFOLIO DEMO
+      </div>
+      <div class="phone" id="phone">
+        <div class="status-bar" aria-hidden="true">
+          <span>9:41</span><span class="camera"></span
+          ><span>▮▮▮ &nbsp; Wi-Fi &nbsp; ▰</span>
+        </div>
+        <div id="app"></div>
+        <div id="toast" role="status" aria-live="polite"></div>
+        <dialog id="dialog"></dialog>
+      </div>
+      <p class="device-caption">
+        Try it. Your changes are saved on this browser.
+      </p>
+    </div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

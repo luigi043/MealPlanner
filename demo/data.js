@@ -1,0 +1,123 @@
+import { todayKey } from "./core.js";
+// Illustrative values from the Android project's sample recipes, not a nutrition database.
+export function sampleState() {
+  return {
+    version: 1,
+    dark: false,
+    target: 2000,
+    groceries: [],
+    recipes: [
+      {
+        id: 1,
+        name: "Grilled Chicken Salad",
+        category: "Lunch",
+        description:
+          "Mixed greens, grilled chicken and a light lemon dressing.",
+        prep: 10,
+        cook: 15,
+        servings: 2,
+        calories: 320,
+        protein: 42,
+        carbs: 8,
+        fat: 12,
+        favorite: true,
+        art: "salad",
+        tags: "quick, lunch",
+        ingredients: [
+          { name: "Chicken breast", quantity: 200, unit: "g" },
+          { name: "Mixed greens", quantity: 100, unit: "g" },
+          { name: "Cherry tomatoes", quantity: 50, unit: "g" },
+          { name: "Olive oil", quantity: 1, unit: "tbsp" },
+        ],
+        instructions:
+          "Prepare and wash the vegetables.\nCook chicken thoroughly following food safety guidance.\nSlice chicken and combine with greens and tomatoes.\nDress with olive oil and lemon to taste.",
+      },
+      {
+        id: 2,
+        name: "Avocado Toast with Eggs",
+        category: "Breakfast",
+        description: "Creamy avocado, eggs and crisp whole grain toast.",
+        prep: 5,
+        cook: 5,
+        servings: 1,
+        calories: 420,
+        protein: 18,
+        carbs: 32,
+        fat: 24,
+        favorite: false,
+        art: "toast",
+        tags: "quick, vegetarian",
+        ingredients: [
+          { name: "Whole grain bread", quantity: 2, unit: "slice" },
+          { name: "Avocado", quantity: 1, unit: "piece" },
+          { name: "Eggs", quantity: 2, unit: "piece" },
+        ],
+        instructions:
+          "Toast the bread.\nMash avocado and spread on toast.\nCook the eggs to your preference and serve on top.",
+      },
+      {
+        id: 3,
+        name: "Salmon with Quinoa",
+        category: "Dinner",
+        description: "Baked salmon with quinoa, broccoli and lemon.",
+        prep: 10,
+        cook: 20,
+        servings: 2,
+        calories: 480,
+        protein: 38,
+        carbs: 35,
+        fat: 16,
+        favorite: true,
+        art: "salmon",
+        tags: "dinner",
+        ingredients: [
+          { name: "Salmon fillet", quantity: 200, unit: "g" },
+          { name: "Quinoa", quantity: 80, unit: "g" },
+          { name: "Broccoli", quantity: 150, unit: "g" },
+          { name: "Olive oil", quantity: 2, unit: "tbsp" },
+        ],
+        instructions:
+          "Cook quinoa according to its package.\nPrepare and cook salmon thoroughly.\nRoast or steam broccoli.\nServe with lemon and olive oil.",
+      },
+      {
+        id: 4,
+        name: "Greek Yogurt Parfait",
+        category: "Snack",
+        description: "Yogurt layered with berries, granola and honey.",
+        prep: 5,
+        cook: 0,
+        servings: 1,
+        calories: 280,
+        protein: 16,
+        carbs: 38,
+        fat: 8,
+        favorite: false,
+        art: "berries",
+        tags: "quick, snack",
+        ingredients: [
+          { name: "Greek yogurt", quantity: 150, unit: "g" },
+          { name: "Mixed berries", quantity: 100, unit: "g" },
+          { name: "Granola", quantity: 30, unit: "g" },
+        ],
+        instructions:
+          "Spoon yogurt into a bowl.\nLayer berries and granola on top.\nServe immediately.",
+      },
+    ],
+    plans: [
+      {
+        id: "sample-breakfast",
+        date: todayKey(),
+        type: "Breakfast",
+        recipeId: 2,
+        servings: 1,
+      },
+      {
+        id: "sample-lunch",
+        date: todayKey(),
+        type: "Lunch",
+        recipeId: 1,
+        servings: 1,
+      },
+    ],
+  };
+}
