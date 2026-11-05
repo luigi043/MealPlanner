@@ -1,0 +1,10 @@
+{
+  "targetSdk": 34,
+  "bytes": 18900265,
+  "verificationDate": "2026-11-05",
+  "minSdk": 26,
+  "applicationId": "com.mealplanner.debug",
+  "version": "1.0.0",
+  "sha256": "3077a5954dc2d44099e97e3bb42ae642c705a58cd89a07fa53bb131a28a72229",
+  "buildType": "debug"
+}

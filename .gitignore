@@ -30,3 +30,4 @@ local.properties
 *.log
 demo/test-results/
 demo/playwright-report/
+!demo/downloads/mealplanner-debug.apk

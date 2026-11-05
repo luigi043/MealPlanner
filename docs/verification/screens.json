@@ -1,0 +1,345 @@
+[
+  {
+    "type": "native",
+    "file": "01-dashboard.png",
+    "caption": "Dashboard",
+    "action": "Launch app",
+    "viewport": "Android 15 emulator, 1080×2340"
+  },
+  {
+    "type": "native",
+    "file": "02-recipes.png",
+    "caption": "Recipe library",
+    "action": "Home > Recipes",
+    "viewport": "Android 15 emulator, 1080×2340"
+  },
+  {
+    "type": "native",
+    "file": "03-recipe-detail.png",
+    "caption": "Recipe details and serving controls",
+    "action": "Recipes > search Grilled > open Grilled Chicken Salad",
+    "viewport": "Android 15 emulator, 1080×2340"
+  },
+  {
+    "type": "native",
+    "file": "04-edit-recipe.png",
+    "caption": "Edit an existing recipe",
+    "action": "Recipe detail > Edit",
+    "viewport": "Android 15 emulator, 1080×2340"
+  },
+  {
+    "type": "native",
+    "file": "05-new-recipe.png",
+    "caption": "New recipe form",
+    "action": "Recipes > Add Recipe",
+    "viewport": "Android 15 emulator, 1080×2340"
+  },
+  {
+    "type": "native",
+    "file": "06-recipe-validation.png",
+    "caption": "Required-field validation",
+    "action": "New Recipe > Save with required fields empty",
+    "viewport": "Android 15 emulator, 1080×2340"
+  },
+  {
+    "type": "native",
+    "file": "07-add-ingredient.png",
+    "caption": "Add ingredient dialog",
+    "action": "New Recipe > Ingredients > Add",
+    "viewport": "Android 15 emulator, 1080×2340"
+  },
+  {
+    "type": "native",
+    "file": "07b-recipe-saved.png",
+    "caption": "New recipe saved to Room",
+    "action": "Complete synthetic recipe and Save",
+    "viewport": "Android 15 emulator, 1080×2340"
+  },
+  {
+    "type": "native",
+    "file": "08-meal-plan-day.png",
+    "caption": "Day plan",
+    "action": "Bottom navigation > Plan",
+    "viewport": "Android 15 emulator, 1080×2340"
+  },
+  {
+    "type": "native",
+    "file": "09-meal-plan-filled.png",
+    "caption": "Auto-fill keeps existing meals",
+    "action": "Plan > Auto-generate",
+    "viewport": "Android 15 emulator, 1080×2340"
+  },
+  {
+    "type": "native",
+    "file": "10-meal-plan-week.png",
+    "caption": "Weekly overview",
+    "action": "Plan > Toggle view",
+    "viewport": "Android 15 emulator, 1080×2340"
+  },
+  {
+    "type": "native",
+    "file": "11-add-meal.png",
+    "caption": "Choose a meal and servings",
+    "action": "Day plan > Add meal",
+    "viewport": "Android 15 emulator, 1080×2340"
+  },
+  {
+    "type": "native",
+    "file": "12-groceries.png",
+    "caption": "Generated grocery checklist",
+    "action": "Plan > Generate, then Grocery",
+    "viewport": "Android 15 emulator, 1080×2340"
+  },
+  {
+    "type": "native",
+    "file": "13-add-grocery.png",
+    "caption": "Manual grocery item dialog",
+    "action": "Grocery > Add item",
+    "viewport": "Android 15 emulator, 1080×2340"
+  },
+  {
+    "type": "native",
+    "file": "14-settings-goals.png",
+    "caption": "Planning preferences",
+    "action": "Bottom navigation > Settings",
+    "viewport": "Android 15 emulator, 1080×2340"
+  },
+  {
+    "type": "native",
+    "file": "15-settings-preferences.png",
+    "caption": "Theme and reminder preferences",
+    "action": "Settings > scroll to Preferences",
+    "viewport": "Android 15 emulator, 1080×2340"
+  },
+  {
+    "type": "native",
+    "file": "16-settings-about.png",
+    "caption": "Build and sample-data information",
+    "action": "Settings > scroll to About",
+    "viewport": "Android 15 emulator, 1080×2340"
+  },
+  {
+    "type": "demo",
+    "file": "desktop-01-home.png",
+    "caption": "Today dashboard",
+    "action": "Browser walkthrough: Today dashboard",
+    "viewport": "1440×1080 outer viewport, 414px app"
+  },
+  {
+    "type": "demo",
+    "file": "desktop-02-plan.png",
+    "caption": "Day plan",
+    "action": "Browser walkthrough: Day plan",
+    "viewport": "1440×1080 outer viewport, 414px app"
+  },
+  {
+    "type": "demo",
+    "file": "desktop-03-add-meal.png",
+    "caption": "Meal selection dialog",
+    "action": "Browser walkthrough: Meal selection dialog",
+    "viewport": "1440×1080 outer viewport, 414px app"
+  },
+  {
+    "type": "demo",
+    "file": "desktop-04-week.png",
+    "caption": "Weekly overview",
+    "action": "Browser walkthrough: Weekly overview",
+    "viewport": "1440×1080 outer viewport, 414px app"
+  },
+  {
+    "type": "demo",
+    "file": "desktop-05-groceries.png",
+    "caption": "Generated groceries",
+    "action": "Browser walkthrough: Generated groceries",
+    "viewport": "1440×1080 outer viewport, 414px app"
+  },
+  {
+    "type": "demo",
+    "file": "desktop-06-add-grocery.png",
+    "caption": "Manual grocery item",
+    "action": "Browser walkthrough: Manual grocery item",
+    "viewport": "1440×1080 outer viewport, 414px app"
+  },
+  {
+    "type": "demo",
+    "file": "desktop-07-recipes.png",
+    "caption": "Recipe library",
+    "action": "Browser walkthrough: Recipe library",
+    "viewport": "1440×1080 outer viewport, 414px app"
+  },
+  {
+    "type": "demo",
+    "file": "desktop-08-empty-search.png",
+    "caption": "No matching recipes",
+    "action": "Browser walkthrough: No matching recipes",
+    "viewport": "1440×1080 outer viewport, 414px app"
+  },
+  {
+    "type": "demo",
+    "file": "desktop-09-recipe-detail.png",
+    "caption": "Recipe and scaled servings",
+    "action": "Browser walkthrough: Recipe and scaled servings",
+    "viewport": "1440×1080 outer viewport, 414px app"
+  },
+  {
+    "type": "demo",
+    "file": "desktop-10-edit-recipe.png",
+    "caption": "Edit recipe dialog",
+    "action": "Browser walkthrough: Edit recipe dialog",
+    "viewport": "1440×1080 outer viewport, 414px app"
+  },
+  {
+    "type": "demo",
+    "file": "desktop-11-new-recipe.png",
+    "caption": "Create recipe dialog",
+    "action": "Browser walkthrough: Create recipe dialog",
+    "viewport": "1440×1080 outer viewport, 414px app"
+  },
+  {
+    "type": "demo",
+    "file": "desktop-12-settings.png",
+    "caption": "Settings",
+    "action": "Browser walkthrough: Settings",
+    "viewport": "1440×1080 outer viewport, 414px app"
+  },
+  {
+    "type": "demo",
+    "file": "desktop-13-dark-settings.png",
+    "caption": "Dark mode",
+    "action": "Browser walkthrough: Dark mode",
+    "viewport": "1440×1080 outer viewport, 414px app"
+  },
+  {
+    "type": "demo",
+    "file": "desktop-14-reset-dialog.png",
+    "caption": "Reset confirmation",
+    "action": "Browser walkthrough: Reset confirmation",
+    "viewport": "1440×1080 outer viewport, 414px app"
+  },
+  {
+    "type": "demo",
+    "file": "phone-01-home.png",
+    "caption": "Today dashboard",
+    "action": "Browser walkthrough: Today dashboard",
+    "viewport": "390×844 phone"
+  },
+  {
+    "type": "demo",
+    "file": "phone-02-plan.png",
+    "caption": "Day plan",
+    "action": "Browser walkthrough: Day plan",
+    "viewport": "390×844 phone"
+  },
+  {
+    "type": "demo",
+    "file": "phone-03-add-meal.png",
+    "caption": "Meal selection dialog",
+    "action": "Browser walkthrough: Meal selection dialog",
+    "viewport": "390×844 phone"
+  },
+  {
+    "type": "demo",
+    "file": "phone-04-week.png",
+    "caption": "Weekly overview",
+    "action": "Browser walkthrough: Weekly overview",
+    "viewport": "390×844 phone"
+  },
+  {
+    "type": "demo",
+    "file": "phone-05-groceries.png",
+    "caption": "Generated groceries",
+    "action": "Browser walkthrough: Generated groceries",
+    "viewport": "390×844 phone"
+  },
+  {
+    "type": "demo",
+    "file": "phone-06-add-grocery.png",
+    "caption": "Manual grocery item",
+    "action": "Browser walkthrough: Manual grocery item",
+    "viewport": "390×844 phone"
+  },
+  {
+    "type": "demo",
+    "file": "phone-07-recipes.png",
+    "caption": "Recipe library",
+    "action": "Browser walkthrough: Recipe library",
+    "viewport": "390×844 phone"
+  },
+  {
+    "type": "demo",
+    "file": "phone-08-empty-search.png",
+    "caption": "No matching recipes",
+    "action": "Browser walkthrough: No matching recipes",
+    "viewport": "390×844 phone"
+  },
+  {
+    "type": "demo",
+    "file": "phone-09-recipe-detail.png",
+    "caption": "Recipe and scaled servings",
+    "action": "Browser walkthrough: Recipe and scaled servings",
+    "viewport": "390×844 phone"
+  },
+  {
+    "type": "demo",
+    "file": "phone-10-edit-recipe.png",
+    "caption": "Edit recipe dialog",
+    "action": "Browser walkthrough: Edit recipe dialog",
+    "viewport": "390×844 phone"
+  },
+  {
+    "type": "demo",
+    "file": "phone-11-new-recipe.png",
+    "caption": "Create recipe dialog",
+    "action": "Browser walkthrough: Create recipe dialog",
+    "viewport": "390×844 phone"
+  },
+  {
+    "type": "demo",
+    "file": "phone-12-settings.png",
+    "caption": "Settings",
+    "action": "Browser walkthrough: Settings",
+    "viewport": "390×844 phone"
+  },
+  {
+    "type": "demo",
+    "file": "phone-13-dark-settings.png",
+    "caption": "Dark mode",
+    "action": "Browser walkthrough: Dark mode",
+    "viewport": "390×844 phone"
+  },
+  {
+    "type": "demo",
+    "file": "phone-14-reset-dialog.png",
+    "caption": "Reset confirmation",
+    "action": "Browser walkthrough: Reset confirmation",
+    "viewport": "390×844 phone"
+  },
+  {
+    "type": "demo",
+    "file": "phone-15-empty-grocery.png",
+    "caption": "Empty grocery list",
+    "action": "Browser walkthrough: Empty grocery list",
+    "viewport": "390×844 phone"
+  },
+  {
+    "type": "demo",
+    "file": "phone-16-invalid-ingredient.png",
+    "caption": "Ingredient format validation",
+    "action": "Browser walkthrough: Ingredient format validation",
+    "viewport": "390×844 phone"
+  },
+  {
+    "type": "demo",
+    "file": "phone-17-delete-dialog.png",
+    "caption": "Delete recipe confirmation",
+    "action": "Browser walkthrough: Delete recipe confirmation",
+    "viewport": "390×844 phone"
+  },
+  {
+    "type": "demo",
+    "file": "small-phone-recipe-form.png",
+    "caption": "Recipe form on a 320px phone",
+    "action": "Browser walkthrough: Recipe form on a 320px phone",
+    "viewport": "320×640 phone"
+  }
+]
