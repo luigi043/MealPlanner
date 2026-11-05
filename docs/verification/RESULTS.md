@@ -29,13 +29,15 @@ Evidence-backed fixes:
 | Android lint | 0 errors, 56 warnings | `:app:lintDebug`; warnings include older dependency/target versions and existing compatibility/icon issues |
 | Native Android walkthrough | 1 passed, 87.176 seconds | `native-walkthrough.txt`; real API 35 emulator and Room-backed forms |
 | Browser logic tests | 6 passed | `demo/tests/core.test.mjs` |
-| Public browser tests | 4 passed | Recipe lifecycle, phone walkthrough, desktop walkthrough, small-phone layout |
+| Public browser tests | 5 passed | Recipe lifecycle, phone walkthrough, desktop walkthrough, small-phone layout, gallery/APK integrity |
 
 The JVM tests exercise finite numeric validation, composed filters, grocery scaling and replacement semantics, auto-fill preservation/idempotence, and per-serving nutrition. They use synthetic DAO proxies rather than a remote database. The native walkthrough supplements them with actual Room-backed interaction.
 
 The successful native walkthrough visited every navigation destination, opened an existing recipe and its editor, checked required-field errors, added an ingredient and saved a synthetic recipe, filled a meal plan, switched day/week views, opened meal selection, generated groceries, added a manual shopping item, and changed the theme in Settings. Seventeen native screenshots and thirty-two browser screenshots record these screens, dialogs and key empty/error states. Earlier native test attempts exposed selector ambiguity and asynchronous load timing in the test harness; those selectors were corrected before the successful run.
 
 The public browser tests ran against `https://mealplanner-portfolio-psi.vercel.app`, using fresh Edge contexts. They created, edited and deleted a recipe; verified user text was escaped; added meals; filled a week twice; generated and exported groceries; kept a manual checked item after regeneration; searched by category; scaled servings; changed theme and targets; reloaded persisted state; and reset the demo. No JavaScript page errors were observed.
+
+Final public verification ran against deployment source commit `0b4ecc4afca0a2ae5d3e5fdb1ed73d264b429698`: five tests passed in 44.6 seconds. Every one of the 49 gallery images returned HTTP 200 as PNG, the gallery fit a phone viewport, and the downloaded APK matched the committed manifest's byte length and SHA-256. The following documentation commit records these results and refreshes four captures; it does not change application logic.
 
 Browser viewports: 390×844, 1440×1080 and 320×640. Tests assert the app remains at most 430px wide, dialogs stay within the phone bounds, main navigation remains reachable and app/page content does not overflow horizontally. The desktop app viewport is 414px wide.
 
