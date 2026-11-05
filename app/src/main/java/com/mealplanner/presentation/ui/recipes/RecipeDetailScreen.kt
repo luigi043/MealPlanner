@@ -16,6 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mealplanner.domain.model.Ingredient
 import com.mealplanner.domain.model.Recipe
+import com.mealplanner.domain.model.ingredientScale
 import com.mealplanner.presentation.ui.components.*
 import com.mealplanner.presentation.ui.theme.*
 import kotlin.math.roundToInt
@@ -74,7 +75,7 @@ fun RecipeDetailScreen(
             )
             else -> {
                 val recipe = state.recipe!!
-                val scale = state.scaledServings.toDouble() / recipe.servings.toDouble()
+                val scale = ingredientScale(state.scaledServings, recipe.servings)
 
                 Column(
                     modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())
@@ -93,7 +94,7 @@ fun RecipeDetailScreen(
                     Spacer(Modifier.height(16.dp))
 
                     // Nutrition info
-                    NutritionSection(recipe = recipe, scale = scale, modifier = Modifier.padding(horizontal = 16.dp))
+                    NutritionSection(recipe = recipe, scale = state.scaledServings.toDouble(), modifier = Modifier.padding(horizontal = 16.dp))
 
                     Spacer(Modifier.height(16.dp))
 
@@ -227,7 +228,7 @@ private fun ServingAdjuster(
 private fun NutritionSection(recipe: Recipe, scale: Double, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         Text("Nutrition", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-        Text("Per serving (scaled to ${"%.0f".format(scale * recipe.servings)} servings)",
+        Text("Total for ${"%.0f".format(scale)} servings. Values entered per serving.",
             style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(Modifier.height(10.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

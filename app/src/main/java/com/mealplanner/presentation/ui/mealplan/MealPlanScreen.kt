@@ -33,16 +33,14 @@ fun MealPlanScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var showAddMealDialog by remember { mutableStateOf<MealType?>(null) }
-    var showSnackbar by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(showSnackbar) {
-        if (showSnackbar) {
-            kotlinx.coroutines.delay(2000)
-            showSnackbar = false
-        }
+    LaunchedEffect(state.message) {
+        state.message?.let { snackbarHostState.showSnackbar(it); viewModel.dismissMessage() }
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
@@ -57,9 +55,8 @@ fun MealPlanScreen(
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
-                    IconButton(onClick = {
+                    IconButton(enabled = !state.isGenerating, onClick = {
                         viewModel.autoGenerateWeekPlan()
-                        showSnackbar = true
                     }) {
                         Icon(Icons.Outlined.AutoAwesome, contentDescription = "Auto-generate",
                             tint = MaterialTheme.colorScheme.onPrimary)
@@ -70,6 +67,15 @@ fun MealPlanScreen(
         }
     ) { padding ->
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = { viewModel.selectDate(state.selectedDate.minusWeeks(1)) }) {
+                    Icon(Icons.Default.ChevronLeft, contentDescription = "Previous week")
+                }
+                TextButton(onClick = { viewModel.selectDate(LocalDate.now()) }) { Text("Today") }
+                IconButton(onClick = { viewModel.selectDate(state.selectedDate.plusWeeks(1)) }) {
+                    Icon(Icons.Default.ChevronRight, contentDescription = "Next week")
+                }
+            }
             // Week strip calendar
             WeekStripCalendar(
                 selectedDate = state.selectedDate,
@@ -109,7 +115,18 @@ fun MealPlanScreen(
                 contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 32.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(MealType.values().sortedBy { it.order }) { mealType ->
+                if (state.showWeekView) {
+                    items((0..6).map { state.weekStart.plusDays(it.toLong()) }) { date ->
+                        Card(onClick = { viewModel.selectDate(date); viewModel.toggleView() }, modifier = Modifier.fillMaxWidth()) {
+                            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text(date.format(DateTimeFormatter.ofPattern("EEE, MMM d", Locale.ENGLISH)), fontWeight = FontWeight.Bold)
+                                val meals = state.weekMeals[date].orEmpty()
+                                if (meals.isEmpty()) Text("No meals planned. Tap to plan this day.")
+                                meals.sortedBy { it.mealType.order }.forEach { Text("${it.mealType.displayName}: ${it.recipeName}") }
+                            }
+                        }
+                    }
+                } else items(MealType.values().sortedBy { it.order }) { mealType ->
                     MealTypeSection(
                         mealType = mealType,
                         meals = state.dayMeals[mealType] ?: emptyList(),
@@ -137,13 +154,6 @@ fun MealPlanScreen(
         )
     }
 
-    if (showSnackbar) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-            Snackbar(modifier = Modifier.padding(16.dp)) {
-                Text("✨ Week meal plan generated!")
-            }
-        }
-    }
 }
 
 @Composable
@@ -328,7 +338,7 @@ private fun AddMealDialog(
         onDismissRequest = onDismiss,
         title = { Text("Add to ${mealType.displayName}") },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 // Search
                 OutlinedTextField(
                     value = searchQuery,
@@ -360,7 +370,7 @@ private fun AddMealDialog(
                     modifier = Modifier.heightIn(max = 220.dp).verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    filteredRecipes.take(20).forEach { recipe ->
+                    filteredRecipes.forEach { recipe ->
                         RecipeSelectItem(
                             recipe = recipe,
                             isSelected = selectedRecipe?.id == recipe.id,
@@ -393,7 +403,7 @@ private fun AddMealDialog(
         confirmButton = {
             Button(
                 onClick = { selectedRecipe?.let { onAdd(it, servings.toIntOrNull() ?: 1) } },
-                enabled = selectedRecipe != null
+                enabled = selectedRecipe != null && (servings.toIntOrNull() ?: 0) in 1..1000
             ) { Text("Add") }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }

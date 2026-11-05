@@ -128,4 +128,7 @@ class GroceryRepository @Inject constructor(
     suspend fun deleteCheckedItems() = groceryDao.deleteCheckedItems()
 
     suspend fun clearAll() = groceryDao.clearAllGroceryItems()
+
+    suspend fun replaceGeneratedItems(items: List<GroceryItem>) =
+        groceryDao.replaceGeneratedItems(items.map { it.toEntity() })
 }

@@ -14,6 +14,7 @@ import java.time.LocalDate
 import java.time.temporal.WeekFields
 import java.util.Locale
 import javax.inject.Inject
+import kotlinx.coroutines.Job
 
 data class MealPlanUiState(
     val isLoading: Boolean = false,
@@ -26,7 +27,8 @@ data class MealPlanUiState(
     val datesWithPlans: List<LocalDate> = emptyList(),
     val isGenerating: Boolean = false,
     val showWeekView: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val message: String? = null
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -43,6 +45,7 @@ class MealPlanViewModel @Inject constructor(
     val uiState: StateFlow<MealPlanUiState> = _uiState.asStateFlow()
 
     private val selectedDate = MutableStateFlow(LocalDate.now())
+    private var suggestionsJob: Job? = null
 
     init {
         viewModelScope.launch {
@@ -83,6 +86,7 @@ class MealPlanViewModel @Inject constructor(
     }
 
     fun addMeal(date: LocalDate, mealType: MealType, recipe: Recipe, servings: Int = 1) {
+        if (servings !in 1..1000) return
         viewModelScope.launch {
             mealPlanRepository.insertMealPlan(
                 MealPlan(
@@ -109,23 +113,38 @@ class MealPlanViewModel @Inject constructor(
     fun generateGroceryList() {
         viewModelScope.launch {
             val weekStart = _uiState.value.weekStart
-            generateGroceryListUseCase(weekStart, weekStart.plusDays(6))
+            try {
+                generateGroceryListUseCase(weekStart, weekStart.plusDays(6))
+                _uiState.update { it.copy(message = "Grocery list updated. Manual items kept.") }
+            } catch (e: kotlinx.coroutines.CancellationException) { throw e
+            } catch (e: Exception) {
+                _uiState.update { it.copy(message = "Could not generate groceries. Please try again.") }
+            }
         }
     }
 
     fun autoGenerateWeekPlan() {
+        if (_uiState.value.isGenerating) return
         viewModelScope.launch {
             _uiState.update { it.copy(isGenerating = true) }
+            try {
             autoGenerateMealPlanUseCase(
                 startDate = _uiState.value.weekStart,
                 goals = UserGoals()
             )
-            _uiState.update { it.copy(isGenerating = false) }
+            _uiState.update { it.copy(message = if (it.availableRecipes.isEmpty()) "Add a recipe first." else "Empty breakfast, lunch and dinner slots filled.") }
+            } catch (e: kotlinx.coroutines.CancellationException) { throw e
+            } catch (e: Exception) {
+                _uiState.update { it.copy(message = "Could not fill this week. Please try again.") }
+            } finally {
+                _uiState.update { it.copy(isGenerating = false) }
+            }
         }
     }
 
     fun loadSmartSuggestions(mealType: MealType) {
-        viewModelScope.launch {
+        suggestionsJob?.cancel()
+        suggestionsJob = viewModelScope.launch {
             getSmartSuggestionsUseCase
                 .getSuggestions(_uiState.value.selectedDate, mealType, 2000)
                 .collect { suggestions ->
@@ -136,4 +155,5 @@ class MealPlanViewModel @Inject constructor(
 
     fun toggleView() = _uiState.update { it.copy(showWeekView = !it.showWeekView) }
     fun dismissError() = _uiState.update { it.copy(error = null) }
+    fun dismissMessage() = _uiState.update { it.copy(message = null) }
 }

@@ -80,6 +80,10 @@ fun AddEditRecipeScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            state.errors["save"]?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+            if (state.errors.isNotEmpty()) {
+                Text("Please check the highlighted fields below.", color = MaterialTheme.colorScheme.error)
+            }
             // Basic Info Card
             FormCard(title = "Basic Information") {
                 FormField(
@@ -138,6 +142,7 @@ fun AddEditRecipeScreen(
                     FormField(
                         label = "Prep Time (min)",
                         value = state.prepTime,
+                        error = state.errors["prepTime"],
                         onValueChange = viewModel::onPrepTimeChange,
                         placeholder = "15",
                         keyboardType = KeyboardType.Number,
@@ -146,6 +151,7 @@ fun AddEditRecipeScreen(
                     FormField(
                         label = "Cook Time (min)",
                         value = state.cookTime,
+                        error = state.errors["cookTime"],
                         onValueChange = viewModel::onCookTimeChange,
                         placeholder = "30",
                         keyboardType = KeyboardType.Number,
@@ -154,6 +160,7 @@ fun AddEditRecipeScreen(
                     FormField(
                         label = "Servings",
                         value = state.servings,
+                        error = state.errors["servings"],
                         onValueChange = viewModel::onServingsChange,
                         placeholder = "2",
                         keyboardType = KeyboardType.Number,
@@ -177,6 +184,7 @@ fun AddEditRecipeScreen(
                     FormField(
                         label = "Protein (g)",
                         value = state.protein,
+                        error = state.errors["protein"],
                         onValueChange = viewModel::onProteinChange,
                         placeholder = "0",
                         keyboardType = KeyboardType.Decimal,
@@ -187,6 +195,7 @@ fun AddEditRecipeScreen(
                     FormField(
                         label = "Carbs (g)",
                         value = state.carbs,
+                        error = state.errors["carbs"],
                         onValueChange = viewModel::onCarbsChange,
                         placeholder = "0",
                         keyboardType = KeyboardType.Decimal,
@@ -195,6 +204,7 @@ fun AddEditRecipeScreen(
                     FormField(
                         label = "Fat (g)",
                         value = state.fat,
+                        error = state.errors["fat"],
                         onValueChange = viewModel::onFatChange,
                         placeholder = "0",
                         keyboardType = KeyboardType.Decimal,
@@ -203,6 +213,7 @@ fun AddEditRecipeScreen(
                     FormField(
                         label = "Fiber (g)",
                         value = state.fiber,
+                        error = state.errors["fiber"],
                         onValueChange = viewModel::onFiberChange,
                         placeholder = "0",
                         keyboardType = KeyboardType.Decimal,
@@ -423,7 +434,7 @@ private fun AddIngredientDialog(
         confirmButton = {
             Button(
                 onClick = { if (name.isNotBlank() && quantity.isNotBlank()) onAdd(name, quantity, unit) },
-                enabled = name.isNotBlank() && quantity.isNotBlank()
+                enabled = name.isNotBlank() && unit.isNotBlank() && validAmount(quantity, allowZero = false)
             ) { Text("Add") }
         },
         dismissButton = {

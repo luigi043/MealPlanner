@@ -123,6 +123,15 @@ interface GroceryDao {
     @Query("DELETE FROM grocery_items")
     suspend fun clearAllGroceryItems()
 
+    @Query("DELETE FROM grocery_items WHERE isManuallyAdded = 0")
+    suspend fun clearGeneratedItems()
+
+    @Transaction
+    suspend fun replaceGeneratedItems(items: List<GroceryItemEntity>) {
+        clearGeneratedItems()
+        insertGroceryItems(items)
+    }
+
     @Query("SELECT COUNT(*) FROM grocery_items WHERE isChecked = 0")
     fun getPendingItemCount(): Flow<Int>
 }

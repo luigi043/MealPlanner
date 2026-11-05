@@ -71,7 +71,7 @@ fun RecipesScreen(
             )
 
             // Category filter chips
-            if (!state.showFavoritesOnly && state.searchQuery.isBlank()) {
+            if (!state.isLoading) {
                 CategoryFilterRow(
                     selectedCategory = state.selectedCategory,
                     onCategorySelected = viewModel::onCategorySelected

@@ -321,10 +321,10 @@ private fun AddGroceryItemDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    val qty = quantity.toDoubleOrNull() ?: 1.0
+                    val qty = quantity.toDouble()
                     if (name.isNotBlank()) onAdd(name, qty, unit)
                 },
-                enabled = name.isNotBlank()
+                enabled = name.isNotBlank() && unit.isNotBlank() && com.mealplanner.domain.model.validAmount(quantity, allowZero = false)
             ) { Text("Add") }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }

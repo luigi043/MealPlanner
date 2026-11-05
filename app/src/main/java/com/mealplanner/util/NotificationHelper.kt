@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.mealplanner.MainActivity
 import com.mealplanner.R
 
@@ -15,6 +16,7 @@ object NotificationHelper {
     private const val CHANNEL_NAME = "Meal Planner Reminders"
 
     fun showMealReminder(context: Context, title: String, message: String) {
+        if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) return
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

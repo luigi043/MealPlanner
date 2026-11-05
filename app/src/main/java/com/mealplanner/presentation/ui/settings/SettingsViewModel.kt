@@ -35,28 +35,28 @@ class SettingsViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SettingsUiState())
 
     fun updateCalorieTarget(target: String) {
-        val value = target.toIntOrNull() ?: return
+        val value = target.toIntOrNull()?.takeIf { it in 1..100000 } ?: return
         viewModelScope.launch {
             preferencesManager.updateUserGoals(uiState.value.userGoals.copy(dailyCalorieTarget = value))
         }
     }
 
     fun updateProteinTarget(target: String) {
-        val value = target.toIntOrNull() ?: return
+        val value = target.toIntOrNull()?.takeIf { it in 0..100000 } ?: return
         viewModelScope.launch {
             preferencesManager.updateUserGoals(uiState.value.userGoals.copy(dailyProteinTarget = value))
         }
     }
 
     fun updateCarbsTarget(target: String) {
-        val value = target.toIntOrNull() ?: return
+        val value = target.toIntOrNull()?.takeIf { it in 0..100000 } ?: return
         viewModelScope.launch {
             preferencesManager.updateUserGoals(uiState.value.userGoals.copy(dailyCarbsTarget = value))
         }
     }
 
     fun updateFatTarget(target: String) {
-        val value = target.toIntOrNull() ?: return
+        val value = target.toIntOrNull()?.takeIf { it in 0..100000 } ?: return
         viewModelScope.launch {
             preferencesManager.updateUserGoals(uiState.value.userGoals.copy(dailyFatTarget = value))
         }

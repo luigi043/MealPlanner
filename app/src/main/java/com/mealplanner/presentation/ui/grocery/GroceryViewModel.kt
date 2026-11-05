@@ -41,9 +41,10 @@ class GroceryViewModel @Inject constructor(
     }
 
     fun addItem(name: String, quantity: Double, unit: String) {
+        if (name.isBlank() || unit.isBlank() || !quantity.isFinite() || quantity <= 0) return
         viewModelScope.launch {
             repository.insertGroceryItem(
-                GroceryItem(name = name, quantity = quantity, unit = unit, isManuallyAdded = true)
+                GroceryItem(name = name.trim(), quantity = quantity, unit = unit.trim(), isManuallyAdded = true)
             )
         }
     }

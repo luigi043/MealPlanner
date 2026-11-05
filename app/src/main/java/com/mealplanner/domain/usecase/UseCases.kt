@@ -21,7 +21,7 @@ class GenerateGroceryListUseCase @Inject constructor(
 
         for (plan in mealPlans) {
             val recipe = recipeRepository.getRecipeById(plan.recipeId) ?: continue
-            val scaleFactor = plan.servings.toDouble() / recipe.servings.toDouble()
+            val scaleFactor = ingredientScale(plan.servings, recipe.servings)
 
             for (ingredient in recipe.ingredients) {
                 val key = "${ingredient.name.lowercase().trim()}|${ingredient.unit.lowercase().trim()}"
@@ -45,8 +45,7 @@ class GenerateGroceryListUseCase @Inject constructor(
             )
         }
 
-        groceryRepository.clearAll()
-        groceryRepository.insertGroceryItems(groceryItems)
+        groceryRepository.replaceGeneratedItems(groceryItems)
     }
 
     private fun categorizeIngredient(name: String): String {
@@ -147,7 +146,7 @@ class GetSmartSuggestionsUseCase @Inject constructor(
 
                     val reason = when {
                         recipe.isFavorite -> "⭐ One of your favorites"
-                        calorieScore > 0.8 -> "🎯 Fits your calorie goal perfectly"
+                        calorieScore > 0.8 -> "Close to your remaining calorie target"
                         recipe.prepTimeMinutes <= 20 -> "⚡ Quick to prepare"
                         recipe.category == RecipeCategory.HIGH_PROTEIN -> "💪 Great for protein intake"
                         else -> "✨ Recommended for you"
@@ -173,6 +172,8 @@ class AutoGenerateMealPlanUseCase @Inject constructor(
         val recipes = recipeRepository.getAllRecipes().first()
         if (recipes.isEmpty()) return
 
+        val existing = mealPlanRepository.getMealPlansByDateRange(startDate, startDate.plusDays(6)).first()
+        val occupiedSlots = existing.map { it.date to it.mealType }.toSet()
         val shuffled = recipes.shuffled()
         var recipeIndex = 0
 
@@ -192,6 +193,7 @@ class AutoGenerateMealPlanUseCase @Inject constructor(
             val date = startDate.plusDays(dayOffset.toLong())
             val mealTypes = listOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER)
             for (mealType in mealTypes) {
+                if ((date to mealType) in occupiedSlots) continue
                 val recipe = nextRecipe(mealType)
                 mealPlanRepository.insertMealPlan(
                     MealPlan(

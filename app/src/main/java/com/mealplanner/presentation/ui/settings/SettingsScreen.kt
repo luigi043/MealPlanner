@@ -18,6 +18,11 @@ import androidx.compose.ui.unit.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mealplanner.domain.model.*
+import com.mealplanner.BuildConfig
+import android.Manifest
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,6 +30,9 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        viewModel.toggleNotifications(granted)
+    }
 
     Scaffold(
         topBar = {
@@ -104,10 +112,13 @@ fun SettingsScreen(
             SettingsCard(title = "Preferences", icon = Icons.Outlined.Tune) {
                 SettingsToggle(
                     label = "Meal Reminders",
-                    description = "Get notified about meal times",
+                    description = "Periodic reminders, approximately every 8 hours",
                     icon = Icons.Outlined.Notifications,
                     checked = state.notificationsEnabled,
-                    onCheckedChange = viewModel::toggleNotifications
+                    onCheckedChange = { enabled ->
+                        if (enabled && Build.VERSION.SDK_INT >= 33) permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        else viewModel.toggleNotifications(enabled)
+                    }
                 )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), thickness = 0.5.dp)
                 SettingsToggle(
@@ -121,10 +132,10 @@ fun SettingsScreen(
 
             // App info
             SettingsCard(title = "About", icon = Icons.Outlined.Info) {
-                InfoRow("Version", "1.0.0")
-                InfoRow("Build", "Production")
-                InfoRow("Recipe Storage", "Room Database (local)")
-                InfoRow("Architecture", "MVVM + Clean Architecture")
+                InfoRow("Version", BuildConfig.VERSION_NAME)
+                InfoRow("Build", if (BuildConfig.DEBUG) "Debug" else "Release")
+                InfoRow("Storage", "On this device")
+                Text("Sample recipes include illustrative nutrition values. Check your own ingredients and portions. Targets are personal preferences, not medical advice.", style = MaterialTheme.typography.bodySmall)
             }
 
             Spacer(Modifier.height(16.dp))

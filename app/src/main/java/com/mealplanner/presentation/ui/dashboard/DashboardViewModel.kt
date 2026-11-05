@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
+import com.mealplanner.data.local.PreferencesManager
+import kotlinx.coroutines.Job
 
 data class DashboardUiState(
     val isLoading: Boolean = true,
@@ -28,26 +30,30 @@ data class DashboardUiState(
 class DashboardViewModel @Inject constructor(
     private val mealPlanRepository: MealPlanRepository,
     private val recipeRepository: RecipeRepository,
-    private val getNutritionSummaryUseCase: GetNutritionSummaryUseCase
+    private val getNutritionSummaryUseCase: GetNutritionSummaryUseCase,
+    private val preferencesManager: PreferencesManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
 
     private val today = LocalDate.now()
+    private var dashboardJob: Job? = null
 
     init {
         loadDashboard()
     }
 
     private fun loadDashboard() {
-        viewModelScope.launch {
+        dashboardJob?.cancel()
+        dashboardJob = viewModelScope.launch {
             combine(
                 mealPlanRepository.getMealPlansByDate(today),
                 getNutritionSummaryUseCase.getDailySummary(today),
                 getNutritionSummaryUseCase.getWeeklySummary(today.minusDays(today.dayOfWeek.value.toLong() - 1)),
-                recipeRepository.getAllRecipes()
-            ) { todayMeals, dailyNutrition, weeklySummary, recipes ->
+                recipeRepository.getAllRecipes(),
+                preferencesManager.userGoals
+            ) { todayMeals, dailyNutrition, weeklySummary, recipes, goals ->
                 DashboardUiState(
                     isLoading = false,
                     today = today,
@@ -55,7 +61,7 @@ class DashboardViewModel @Inject constructor(
                     nutritionSummary = dailyNutrition,
                     weeklySummary = weeklySummary,
                     recentRecipes = recipes.take(5),
-                    userGoals = UserGoals(),
+                    userGoals = goals,
                     streakDays = calculateStreak(weeklySummary),
                     error = null
                 )
@@ -68,7 +74,7 @@ class DashboardViewModel @Inject constructor(
     }
 
     private fun calculateStreak(weekly: WeeklyNutritionSummary): Int =
-        weekly.dailySummaries.takeLastWhile { it.mealCount > 0 }.size
+        weekly.dailySummaries.filter { !it.date.isAfter(today) }.takeLastWhile { it.mealCount > 0 }.size
 
     fun dismissError() = _uiState.update { it.copy(error = null) }
 

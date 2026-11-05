@@ -27,3 +27,6 @@ local.properties
 *.aab
 .claude/
 .agents/
+*.log
+demo/test-results/
+demo/playwright-report/

@@ -35,15 +35,11 @@ class RecipesViewModel @Inject constructor(
         _showFavoritesOnly
     ) { query, category, favOnly -> Triple(query, category, favOnly) }
         .flatMapLatest { (query, category, favOnly) ->
-            val source = when {
-                query.isNotBlank() -> repository.searchRecipes(query)
-                favOnly -> repository.getFavoriteRecipes()
-                else -> repository.getRecipesByCategory(category)
-            }
+            val source = repository.getAllRecipes()
             source.map { recipes ->
                 RecipesUiState(
                     isLoading = false,
-                    recipes = recipes,
+                    recipes = filterRecipes(recipes, query, category, favOnly),
                     searchQuery = query,
                     selectedCategory = category,
                     showFavoritesOnly = favOnly
@@ -148,8 +144,9 @@ class AddEditRecipeViewModel @Inject constructor(
     fun onTagsChange(value: String) = _uiState.update { it.copy(tags = value) }
 
     fun addIngredient(name: String, quantity: String, unit: String) {
-        val qty = quantity.toDoubleOrNull() ?: return
-        val ingredient = Ingredient(name = name, quantity = qty, unit = unit)
+        if (name.isBlank() || unit.isBlank() || !validAmount(quantity, allowZero = false)) return
+        val qty = quantity.toDouble()
+        val ingredient = Ingredient(name = name.trim(), quantity = qty, unit = unit.trim())
         _uiState.update { it.copy(ingredients = it.ingredients + ingredient) }
     }
 
@@ -159,6 +156,7 @@ class AddEditRecipeViewModel @Inject constructor(
 
     fun saveRecipe() {
         val state = _uiState.value
+        if (state.isSaving || state.isLoading || state.isSaved) return
         val errors = validate(state)
         if (errors.isNotEmpty()) {
             _uiState.update { it.copy(errors = errors) }
@@ -167,6 +165,7 @@ class AddEditRecipeViewModel @Inject constructor(
 
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true) }
+            try {
             val recipe = Recipe(
                 id = state.recipe?.id ?: 0L,
                 name = state.name.trim(),
@@ -183,7 +182,9 @@ class AddEditRecipeViewModel @Inject constructor(
                 fiber = state.fiber.toDoubleOrNull() ?: 0.0,
                 ingredients = state.ingredients,
                 tags = state.tags.split(",").map { it.trim() }.filter { it.isNotBlank() },
-                isFavorite = state.recipe?.isFavorite ?: false
+                isFavorite = state.recipe?.isFavorite ?: false,
+                createdAt = state.recipe?.createdAt ?: System.currentTimeMillis(),
+                imageUri = state.recipe?.imageUri
             )
             if (state.recipe == null) {
                 repository.insertRecipe(recipe)
@@ -191,6 +192,11 @@ class AddEditRecipeViewModel @Inject constructor(
                 repository.updateRecipe(recipe)
             }
             _uiState.update { it.copy(isSaving = false, isSaved = true) }
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isSaving = false, errors = mapOf("save" to "Could not save recipe. Please try again.")) }
+            }
         }
     }
 
@@ -198,7 +204,14 @@ class AddEditRecipeViewModel @Inject constructor(
         val errors = mutableMapOf<String, String>()
         if (state.name.isBlank()) errors["name"] = "Recipe name is required"
         if (state.instructions.isBlank()) errors["instructions"] = "Instructions are required"
-        if (state.calories.toDoubleOrNull() == null) errors["calories"] = "Valid calories are required"
+        if (!validAmount(state.calories)) errors["calories"] = "Enter a finite, non-negative number"
+        listOf("protein" to state.protein, "carbs" to state.carbs, "fat" to state.fat, "fiber" to state.fiber).forEach { (key, value) ->
+            if (value.isNotBlank() && !validAmount(value)) errors[key] = "Enter a finite, non-negative number"
+        }
+        listOf("prepTime" to state.prepTime, "cookTime" to state.cookTime).forEach { (key, value) ->
+            if (value.isNotBlank() && (value.toIntOrNull() == null || (value.toIntOrNull() ?: -1) < 0)) errors[key] = "Enter whole minutes, 0 or more"
+        }
+        if ((state.servings.toIntOrNull() ?: 0) !in 1..1000) errors["servings"] = "Enter 1 to 1000 servings"
         if (state.ingredients.isEmpty()) errors["ingredients"] = "Add at least one ingredient"
         return errors
     }
